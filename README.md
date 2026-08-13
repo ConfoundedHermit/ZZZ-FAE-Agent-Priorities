@@ -71,53 +71,6 @@ npm run build
 The sanitized regression fixture at `tests/fixtures/profile-fragment.html` can
 also be opened directly in a browser for a quick UI smoke test.
 
-## Package as a CRX
-
-A CRX is a signed package of the generated extension. Build `dist` before
-packing it:
-
-```powershell
-npm run build
-```
-
-For the first package:
-
-1. Open `chrome://extensions` and enable **Developer mode**.
-2. Select **Pack extension**.
-3. Set **Extension root directory** to this repository's `dist` directory.
-4. Leave **Private key file** empty, then select **Pack extension**.
-5. Note the paths Chrome reports for the generated `.crx` package and `.pem`
-   private key.
-
-Store the `.pem` file securely outside the repository. Never publish or share
-it: the key signs extension updates, and losing it prevents future packages from
-retaining the same extension ID.
-
-To package an update, increment the version in both `package.json` and
-`static/manifest.json`, run `npm run build`, then repeat **Pack extension** and
-select the original `.pem` under **Private key file**.
-
-Chrome can also package the extension from PowerShell. Adjust `chromePath` if
-Chrome is installed elsewhere. Omit the key argument only for the first package:
-
-```powershell
-$chromePath = "$env:ProgramFiles\Google\Chrome\Application\chrome.exe"
-$extensionRoot = (Resolve-Path .\dist).Path
-
-# First package: Chrome generates a new private key.
-& $chromePath "--pack-extension=$extensionRoot"
-
-# Updates: reuse the securely stored private key.
-$keyPath = "C:\secure\fae-agent-priorities.pem"
-& $chromePath "--pack-extension=$extensionRoot" "--pack-extension-key=$keyPath"
-```
-
-Direct CRX installation is restricted for regular Chrome users on Windows and
-macOS. Use the Chrome Web Store for general distribution; CRX packages remain
-useful for controlled testing, automation, and supported self-hosted setups.
-See Chrome's official documentation for [packing extensions](https://developer.chrome.com/docs/chromedriver/extensions)
-and [installation restrictions](https://developer.chrome.com/docs/extensions/how-to/distribute/install-extensions).
-
 ## Project layout
 
 ```text
