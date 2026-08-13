@@ -1,0 +1,17 @@
+{
+  "name": "fae-agent-priorities",
+  "version": "0.2.2",
+  "private": true,
+  "description": "A local-only browser extension that ranks FAE agent builds by disc upgrade priority.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "npm run lint && npm test && npm run build",
+    "lint": "node scripts/check-syntax.mjs",
+    "test": "node --test",
+    "test:watch": "node --test --watch"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

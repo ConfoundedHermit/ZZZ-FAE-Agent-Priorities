@@ -1,0 +1,277 @@
+#fae-priority-extension-root {
+  --fae-priority-bg: #171923;
+  --fae-priority-bg-raised: #222532;
+  --fae-priority-border: rgba(255, 255, 255, 0.16);
+  --fae-priority-muted: #aeb4c5;
+  --fae-priority-text: #f7f8fc;
+  --fae-priority-accent: #ffdc65;
+  --fae-priority-warning: #ff8a72;
+  position: fixed;
+  top: 72px;
+  right: 16px;
+  z-index: 2147483646;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: min(600px, calc(100vw - 32px));
+  max-height: calc(100vh - 88px);
+  overflow: hidden;
+  color: var(--fae-priority-text);
+  background: var(--fae-priority-bg);
+  border: 1px solid var(--fae-priority-border);
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+  font-family: "Open Sans", system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.35;
+  color-scheme: dark;
+}
+
+#fae-priority-extension-root *,
+#fae-priority-extension-root *::before,
+#fae-priority-extension-root *::after {
+  box-sizing: border-box;
+}
+
+#fae-priority-extension-root button,
+#fae-priority-extension-root a {
+  font: inherit;
+}
+
+#fae-priority-extension-root .panel-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 54px;
+  padding: 9px 12px;
+  background: linear-gradient(120deg, #292c39, #20222d);
+  border-bottom: 1px solid var(--fae-priority-border);
+}
+
+#fae-priority-extension-root.is-collapsed {
+  width: 240px;
+}
+
+#fae-priority-extension-root.is-collapsed .panel-header {
+  border-bottom: 0;
+}
+
+#fae-priority-extension-root .heading-group {
+  min-width: 0;
+}
+
+#fae-priority-extension-root .panel-title {
+  margin: 0;
+  color: var(--fae-priority-text);
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+#fae-priority-extension-root .profile-label,
+#fae-priority-extension-root .panel-summary,
+#fae-priority-extension-root .panel-note,
+#fae-priority-extension-root .disc-audit,
+#fae-priority-extension-root .lowest-set {
+  color: var(--fae-priority-muted);
+}
+
+#fae-priority-extension-root .header-actions {
+  display: flex;
+  gap: 5px;
+}
+
+#fae-priority-extension-root .icon-button,
+#fae-priority-extension-root .sort-button,
+#fae-priority-extension-root .details-toggle {
+  color: var(--fae-priority-text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--fae-priority-border);
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+#fae-priority-extension-root .icon-button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 18px;
+}
+
+#fae-priority-extension-root .icon-button:hover,
+#fae-priority-extension-root .sort-button:hover,
+#fae-priority-extension-root .sort-button.is-active,
+#fae-priority-extension-root .details-toggle:hover,
+#fae-priority-extension-root .details-toggle[aria-pressed="true"] {
+  color: #151515;
+  background: var(--fae-priority-accent);
+  border-color: var(--fae-priority-accent);
+}
+
+#fae-priority-extension-root .icon-button:focus-visible,
+#fae-priority-extension-root .sort-button:focus-visible,
+#fae-priority-extension-root .details-toggle:focus-visible,
+#fae-priority-extension-root a:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+#fae-priority-extension-root .panel-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px 12px 18px;
+  scrollbar-gutter: stable;
+  scroll-padding-bottom: 18px;
+}
+
+#fae-priority-extension-root .panel-summary,
+#fae-priority-extension-root .panel-note,
+#fae-priority-extension-root .empty-state {
+  margin: 0;
+}
+
+#fae-priority-extension-root .panel-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+#fae-priority-extension-root .details-toggle {
+  flex: 0 0 auto;
+  min-height: 27px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+#fae-priority-extension-root .sort-controls {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+  margin: 9px 0;
+}
+
+#fae-priority-extension-root .sort-button {
+  min-height: 31px;
+  padding: 4px 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+#fae-priority-extension-root .table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--fae-priority-border);
+  border-radius: 8px;
+}
+
+#fae-priority-extension-root .priority-table {
+  width: 100%;
+  min-width: 555px;
+  border-collapse: collapse;
+  background: var(--fae-priority-bg-raised);
+}
+
+#fae-priority-extension-root th,
+#fae-priority-extension-root td {
+  padding: 7px 6px;
+  border-bottom: 1px solid var(--fae-priority-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+#fae-priority-extension-root th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  color: var(--fae-priority-muted);
+  background: #292c39;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+#fae-priority-extension-root tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+#fae-priority-extension-root .needs-set-work {
+  background: rgba(255, 138, 114, 0.07);
+}
+
+#fae-priority-extension-root .is-incomplete {
+  opacity: 0.68;
+}
+
+#fae-priority-extension-root .agent-cell {
+  width: 42%;
+}
+
+#fae-priority-extension-root .priority-position {
+  display: inline-block;
+  width: 25px;
+  color: var(--fae-priority-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+#fae-priority-extension-root .agent-link {
+  color: var(--fae-priority-text);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#fae-priority-extension-root a.agent-link:hover {
+  color: var(--fae-priority-accent);
+  text-decoration: underline;
+}
+
+#fae-priority-extension-root .disc-audit,
+#fae-priority-extension-root .lowest-set {
+  display: block;
+  margin: 3px 0 0 25px;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+#fae-priority-extension-root .score-cell {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+#fae-priority-extension-root .set-warning {
+  color: var(--fae-priority-warning);
+}
+
+#fae-priority-extension-root .set-perfect {
+  color: #82e6a5;
+}
+
+#fae-priority-extension-root .set-cell .lowest-set {
+  margin-left: 0;
+}
+
+#fae-priority-extension-root .panel-note {
+  padding-top: 8px;
+  font-size: 10px;
+}
+
+#fae-priority-extension-root .empty-state {
+  padding: 18px 8px;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  #fae-priority-extension-root {
+    top: auto;
+    right: 8px;
+    bottom: 8px;
+    width: calc(100vw - 16px);
+    max-height: min(70vh, 650px);
+  }
+
+  #fae-priority-extension-root .panel-content {
+    max-height: none;
+  }
+}

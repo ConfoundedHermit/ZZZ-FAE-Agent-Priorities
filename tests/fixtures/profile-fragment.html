@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>FAE priority extension fixture</title>
+  </head>
+  <body>
+    <div class="profile" data-profile-uid="fixture-profile"></div>
+
+    <div
+      class="agent-card"
+      data-agent-slug="fixture-alpha"
+      data-rank="4321"
+      data-top-percentile="0.4321"
+      data-date-updated="1700000000"
+      data-damage-score="10000.0"
+    >
+      <h3 class="title">
+        <span class="mindscapes">M1</span>
+        <label>Fixture Alpha</label>
+      </h3>
+      <a class="button dedicated" href="https://zfae.net/profile/fixture-profile/fixture-alpha">Profile</a>
+      <a class="button build-editor" href="https://zfae.net/build/fixture-alpha/fixture-build">Build</a>
+
+      <div class="disc-details">
+        <div class="stat-list slot1"><img data-tooltip-content-id="tooltip-fixture-build-slot1" /></div>
+        <div class="tooltip-content" id="tooltip-fixture-build-slot1"><ul><li><strong>Set score:</strong><span>100%</span></li><li><strong>Substat score:</strong><span>51%</span></li><li><strong>Total score:</strong><span>81%</span></li></ul></div>
+        <div class="stat-list slot2"><img data-tooltip-content-id="tooltip-fixture-build-slot2" /></div>
+        <div class="tooltip-content" id="tooltip-fixture-build-slot2"><ul><li><strong>Set score:</strong><span>100%</span></li><li><strong>Substat score:</strong><span>52%</span></li><li><strong>Total score:</strong><span>82%</span></li></ul></div>
+        <div class="stat-list slot3"><img data-tooltip-content-id="tooltip-fixture-build-slot3" /></div>
+        <div class="tooltip-content" id="tooltip-fixture-build-slot3"><ul><li><strong>Set score:</strong><span>95%</span></li><li><strong>Substat score:</strong><span>53%</span></li><li><strong>Total score:</strong><span>83%</span></li></ul></div>
+        <div class="stat-list slot4"><img data-tooltip-content-id="tooltip-fixture-build-slot4" /></div>
+        <div class="tooltip-content" id="tooltip-fixture-build-slot4"><ul><li><strong>Set score:</strong><span>90%</span></li><li><strong>Mainstat score:</strong><span>100%</span></li><li><strong>Substat score:</strong><span>54%</span></li><li><strong>Total score:</strong><span>84%</span></li></ul></div>
+        <div class="stat-list slot5"><img data-tooltip-content-id="tooltip-fixture-build-slot5" /></div>
+        <div class="tooltip-content" id="tooltip-fixture-build-slot5"><ul><li><strong>Set score:</strong><span>100%</span></li><li><strong>Mainstat score:</strong><span>100%</span></li><li><strong>Substat score:</strong><span>55%</span></li><li><strong>Total score:</strong><span>85%</span></li></ul></div>
+        <div class="stat-list slot6"><img data-tooltip-content-id="tooltip-fixture-build-slot6" /></div>
+        <div class="tooltip-content" id="tooltip-fixture-build-slot6"><ul><li><strong>Set score:</strong><span>85%</span></li><li><strong>Mainstat score:</strong><span>100%</span></li><li><strong>Substat score:</strong><span>56%</span></li><li><strong>Total score:</strong><span>86%</span></li></ul></div>
+      </div>
+    </div>
+
+    <div class="agent-card" data-agent-slug="fixture-beta">
+      <h3 class="title"><span class="mindscapes">M2</span><label>Fixture Beta</label></h3>
+      <a class="button dedicated" href="https://zfae.net/profile/fixture-profile/fixture-beta">Profile</a>
+      <div class="disc-details"></div>
+    </div>
+
+    <script>
+      if (location.hash.includes("many")) {
+        const source = document.querySelector('[data-agent-slug="fixture-alpha"]');
+        const finalCard = document.querySelector('[data-agent-slug="fixture-beta"]');
+        for (let index = 1; index <= 32; index += 1) {
+          const clone = source.cloneNode(true);
+          clone.dataset.agentSlug = `fixture-agent-${index}`;
+          clone.querySelector("h3.title > label").textContent = `Fixture Agent ${index}`;
+          clone.querySelector("a.button.dedicated").href = `https://zfae.net/profile/fixture-profile/fixture-agent-${index}`;
+          clone.querySelector("a.button.build-editor").href = `https://zfae.net/build/fixture-agent-${index}/fixture-build-${index}`;
+          finalCard.before(clone);
+        }
+      }
+    </script>
+
+    <!-- These scripts make the sanitized fixture usable as a local browser smoke test. -->
+    <link rel="stylesheet" href="../../src/ui/panel.css" />
+    <script src="../../src/domain/priorities.js"></script>
+    <script src="../../src/content/fae-dom-adapter.js"></script>
+    <script src="../../src/ui/panel.js"></script>
+    <script src="../../src/content/bootstrap.js"></script>
+    <script>
+      if (location.hash === "#show-details") {
+        document.querySelector("#fae-priority-extension-root .details-toggle")?.click();
+      }
+      if (location.hash.includes("many")) {
+        const content = document.querySelector("#fae-priority-extension-root .panel-content");
+        setTimeout(() => {
+          content.scrollTop = content.scrollHeight;
+        }, 100);
+      }
+    </script>
+  </body>
+</html>
