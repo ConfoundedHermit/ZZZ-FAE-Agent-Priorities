@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
+await import("../src/domain/agent-metadata.js");
 await import("../src/content/fae-dom-adapter.js");
 
 const { extractProfile, parseScoreText, parseScoreTooltip } =
@@ -151,6 +152,14 @@ test("extractProfile follows tooltip IDs and preserves no-disc agents", () => {
   assert.equal(result.agents.length, 2);
   assert.equal(result.pendingTooltipCount, 0);
   assert.equal(result.agents[0].key, "fixture-alpha:fixture-build");
+  assert.deepEqual(
+    {
+      type: result.agents[0].type,
+      element: result.agents[0].element,
+      rank: result.agents[0].rank,
+    },
+    { type: "Unknown", element: "Unknown", rank: "Unknown" },
+  );
   assert.equal(result.agents[0].status, "complete");
   assert.deepEqual(
     result.agents[0].discs.map((disc) => disc.slot),
@@ -162,6 +171,42 @@ test("extractProfile follows tooltip IDs and preserves no-disc agents", () => {
   );
   assert.equal(result.agents[1].status, "no-disc-data");
   assert.match(result.agents[1].diagnostics[0], /No populated disc slots/);
+});
+
+test("extractProfile attaches catalog metadata by FAE slug", () => {
+  const documentNode = new FakeDocument();
+  const card = populatedCard(documentNode);
+  card.dataset.agentSlug = "zhu-yuan";
+  documentNode.withAll(".agent-card[data-agent-slug]", [card]);
+
+  const [agent] = extractProfile(documentNode).agents;
+
+  assert.deepEqual(
+    { type: agent.type, element: agent.element, rank: agent.rank },
+    { type: "Attack", element: "Ether", rank: "S" },
+  );
+  assert.equal(agent.hasKnownMetadata, true);
+});
+
+test("explicit FAE metadata can override the local catalog", () => {
+  const documentNode = new FakeDocument();
+  const card = populatedCard(documentNode);
+  card.dataset.agentSlug = "zhu-yuan";
+  card.dataset.agentType = "Future type";
+  card.dataset.agentElement = "Future element";
+  card.dataset.agentRarity = "Future rank";
+  documentNode.withAll(".agent-card[data-agent-slug]", [card]);
+
+  const [agent] = extractProfile(documentNode).agents;
+
+  assert.deepEqual(
+    { type: agent.type, element: agent.element, rank: agent.rank },
+    {
+      type: "Future type",
+      element: "Future element",
+      rank: "Future rank",
+    },
+  );
 });
 
 test("missing tooltip content is reported as pending rather than zero", () => {

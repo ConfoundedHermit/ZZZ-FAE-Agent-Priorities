@@ -34,7 +34,8 @@
 }
 
 #fae-priority-extension-root button,
-#fae-priority-extension-root a {
+#fae-priority-extension-root a,
+#fae-priority-extension-root select {
   font: inherit;
 }
 
@@ -84,7 +85,10 @@
 
 #fae-priority-extension-root .icon-button,
 #fae-priority-extension-root .sort-button,
-#fae-priority-extension-root .details-toggle {
+#fae-priority-extension-root .details-toggle,
+#fae-priority-extension-root .clear-filters,
+#fae-priority-extension-root .control-summary,
+#fae-priority-extension-root .filter-select {
   color: var(--fae-priority-text);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--fae-priority-border);
@@ -103,7 +107,10 @@
 #fae-priority-extension-root .sort-button:hover,
 #fae-priority-extension-root .sort-button.is-active,
 #fae-priority-extension-root .details-toggle:hover,
-#fae-priority-extension-root .details-toggle[aria-pressed="true"] {
+#fae-priority-extension-root .details-toggle[aria-pressed="true"],
+#fae-priority-extension-root .clear-filters:hover,
+#fae-priority-extension-root .control-summary:hover,
+#fae-priority-extension-root .control-menu[open] > .control-summary {
   color: #151515;
   background: var(--fae-priority-accent);
   border-color: var(--fae-priority-accent);
@@ -112,6 +119,9 @@
 #fae-priority-extension-root .icon-button:focus-visible,
 #fae-priority-extension-root .sort-button:focus-visible,
 #fae-priority-extension-root .details-toggle:focus-visible,
+#fae-priority-extension-root .clear-filters:focus-visible,
+#fae-priority-extension-root .control-summary:focus-visible,
+#fae-priority-extension-root .filter-select:focus-visible,
 #fae-priority-extension-root a:focus-visible {
   outline: 2px solid white;
   outline-offset: 2px;
@@ -147,11 +157,85 @@
   font-weight: 700;
 }
 
-#fae-priority-extension-root .sort-controls {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 5px;
+#fae-priority-extension-root .list-controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
   margin: 9px 0;
+}
+
+#fae-priority-extension-root .control-menu {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+#fae-priority-extension-root .control-menu[open] {
+  z-index: 3;
+}
+
+#fae-priority-extension-root .control-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 33px;
+  padding: 6px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  list-style: none;
+  cursor: pointer;
+}
+
+#fae-priority-extension-root .control-summary::-webkit-details-marker {
+  display: none;
+}
+
+#fae-priority-extension-root .control-summary::after {
+  content: "▾";
+  margin-left: auto;
+}
+
+#fae-priority-extension-root .control-current {
+  overflow: hidden;
+  color: var(--fae-priority-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#fae-priority-extension-root .control-menu[open] .control-current {
+  color: #333;
+}
+
+#fae-priority-extension-root .active-filter-count {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-left: auto;
+  color: #151515;
+  background: var(--fae-priority-accent);
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+#fae-priority-extension-root .dropdown-panel {
+  position: absolute;
+  top: calc(100% + 5px);
+  min-width: 100%;
+  padding: 7px;
+  background: #292c39;
+  border: 1px solid var(--fae-priority-border);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+}
+
+#fae-priority-extension-root .sort-options {
+  left: 0;
+  display: grid;
+  gap: 4px;
 }
 
 #fae-priority-extension-root .sort-button {
@@ -159,6 +243,50 @@
   padding: 4px 6px;
   font-size: 11px;
   font-weight: 700;
+  text-align: left;
+}
+
+#fae-priority-extension-root .filter-options {
+  right: 0;
+  display: grid;
+  min-width: 210px;
+  gap: 7px;
+}
+
+#fae-priority-extension-root .filter-field {
+  display: grid;
+  grid-template-columns: 58px minmax(120px, 1fr);
+  align-items: center;
+  gap: 7px;
+}
+
+#fae-priority-extension-root .filter-label {
+  color: var(--fae-priority-muted);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+#fae-priority-extension-root .filter-select {
+  width: 100%;
+  min-height: 30px;
+  padding: 4px 24px 4px 7px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+#fae-priority-extension-root .filter-select option {
+  color: var(--fae-priority-text);
+  background: #292c39;
+}
+
+#fae-priority-extension-root .clear-filters {
+  min-height: 29px;
+  padding: 4px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 #fae-priority-extension-root .table-wrapper {

@@ -4,11 +4,13 @@ import { fileURLToPath } from "node:url";
 const projectRoot = new URL("../", import.meta.url);
 const files = [
   "src/domain/priorities.js",
+  "src/domain/agent-metadata.js",
   "src/content/fae-dom-adapter.js",
   "src/ui/panel.js",
   "src/content/bootstrap.js",
   "scripts/build.mjs",
   "tests/priorities.test.js",
+  "tests/agent-metadata.test.js",
   "tests/fae-dom-adapter.test.js",
   "tests/panel.test.js",
 ];

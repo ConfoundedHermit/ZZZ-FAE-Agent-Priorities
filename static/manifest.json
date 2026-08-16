@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "FAE Agent Priorities",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Ranks FAE agent builds by disc set issues and low disc scores.",
   "content_scripts": [
     {
       "matches": ["https://zfae.net/profile/*"],
       "js": [
         "priorities.js",
+        "agent-metadata.js",
         "fae-dom-adapter.js",
         "panel.js",
         "bootstrap.js"

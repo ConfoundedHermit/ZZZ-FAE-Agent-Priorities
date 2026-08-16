@@ -8,6 +8,7 @@ await mkdir(outputDirectory, { recursive: true });
 
 const sourceFiles = [
   ["src/domain/priorities.js", "priorities.js"],
+  ["src/domain/agent-metadata.js", "agent-metadata.js"],
   ["src/content/fae-dom-adapter.js", "fae-dom-adapter.js"],
   ["src/ui/panel.js", "panel.js"],
   ["src/content/bootstrap.js", "bootstrap.js"],

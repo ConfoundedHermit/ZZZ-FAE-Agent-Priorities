@@ -66,6 +66,16 @@
 
   function extractAgent(card, documentNode, index) {
     const slug = card.dataset?.agentSlug || `unknown-${index + 1}`;
+    const metadata = namespace.agentMetadata?.getAgentMetadata(slug, {
+      type: card.dataset?.agentType,
+      element: card.dataset?.agentElement,
+      rank: card.dataset?.agentRarity,
+    }) ?? {
+      type: "Unknown",
+      element: "Unknown",
+      rank: "Unknown",
+      isKnown: false,
+    };
     const name = normalizedText(card.querySelector("h3.title > label")) || slug;
     const mindscape = normalizedText(
       card.querySelector("h3.title > .mindscapes"),
@@ -132,6 +142,10 @@
       key: buildId ? `${slug}:${buildId}` : `${slug}:card-${index + 1}`,
       slug,
       name,
+      type: metadata.type,
+      element: metadata.element,
+      rank: metadata.rank,
+      hasKnownMetadata: metadata.isKnown,
       mindscape,
       dedicatedUrl,
       buildUrl,

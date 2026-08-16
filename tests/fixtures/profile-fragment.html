@@ -62,12 +62,23 @@
     <!-- These scripts make the sanitized fixture usable as a local browser smoke test. -->
     <link rel="stylesheet" href="../../src/ui/panel.css" />
     <script src="../../src/domain/priorities.js"></script>
+    <script src="../../src/domain/agent-metadata.js"></script>
     <script src="../../src/content/fae-dom-adapter.js"></script>
     <script src="../../src/ui/panel.js"></script>
     <script src="../../src/content/bootstrap.js"></script>
     <script>
       if (location.hash === "#show-details") {
         document.querySelector("#fae-priority-extension-root .details-toggle")?.click();
+      }
+      if (location.hash.includes("filter-open")) {
+        document.querySelector("#fae-priority-extension-root .filter-menu").open = true;
+      }
+      if (location.hash.includes("filter-unknown")) {
+        const typeFilter = document.querySelector(
+          "#fae-priority-extension-root .filter-select",
+        );
+        typeFilter.value = "Unknown";
+        typeFilter.dispatchEvent(new Event("change"));
       }
       if (location.hash.includes("many")) {
         const content = document.querySelector("#fae-priority-extension-root .panel-content");

@@ -18,8 +18,8 @@ Every supported agent build is shown with:
 
 The default Combined order puts agents with Set-score issues first, then sorts by
 the lower discs 1–3 average, the lower discs 4–6 average, and finally the all-disc
-average. Separate Set fixes, Discs 1–3, Discs 4–6, and All discs buttons expose
-each priority independently.
+average. The **Sort by...** menu also exposes Set fixes, Discs 1–3, Discs 4–6,
+and All discs independently.
 
 Agents without a complete six-disc score set remain visible at the bottom as
 incomplete; missing data is never interpreted as zero.
@@ -37,12 +37,25 @@ The **Agent Priorities** panel appears in the upper-right corner.
 
 ## Using the priority panel
 
-- **Combined** puts agents with Set-score issues first, followed by the lowest
-  discs 1–3 average and then the lowest discs 4–6 average.
-- **Set fixes** prioritizes the number and severity of Set-score issues.
-- **Discs 1–3** and **Discs 4–6** sort directly by the selected group's average.
-- **All discs** sorts by the average Total score across all six discs and appears
-  as the final priority option.
+- Open **Sort by...** to choose one of five priority orders. The current choice
+  appears beside the menu label:
+  - **Combined** puts complete agents with Set-score issues first, then compares
+    the discs 1–3 average, discs 4–6 average, and all-disc average.
+  - **Set fixes** prioritizes more Set-score issues and then the lowest Set score.
+  - **Discs 1–3** and **Discs 4–6** use the selected group's average as the
+    primary sort value.
+  - **All discs** uses the average Total score across all six discs.
+- Open **Filter by...** to set Type, Element, and Rank independently. Each
+  dropdown defaults to **All**, and selections across the three dropdowns are
+  combined.
+- Filter choices contain only classifications represented by agents on the
+  current profile. An unrecognized agent contributes an **Unknown** choice to
+  its Type, Element, and Rank dropdowns instead of being omitted or guessed.
+- Sorting is applied after filtering, and visible row positions are renumbered.
+  The summary reports how many agents are shown, while **Clear filters** restores
+  all profile agents.
+- Lower disc-score averages represent higher upgrade priority. Incomplete agents
+  that match the filters remain visible below complete agents.
 - Agent rows keep per-disc audit values hidden by default. Use **Show details** to
   reveal them, and **Hide details** to return to the compact view.
 - Mindscape levels appear after the agent name, such as `Lighter [M1]`.
@@ -75,6 +88,7 @@ also be opened directly in a browser for a quick UI smoke test.
 
 ```text
 src/domain/priorities.js       Pure calculations and comparators
+src/domain/agent-metadata.js   Local agent type, element, and rank catalog
 src/content/fae-dom-adapter.js FAE DOM-to-model extraction
 src/content/bootstrap.js       Lifecycle, mutation refresh, and startup
 src/ui/panel.js                Safe DOM rendering and interactions
@@ -89,6 +103,8 @@ dist/                          Generated unpacked extension
 
 - No backend or analytics.
 - No cookies, UID, agent, build, or score data is transmitted or persisted.
+- Agent classifications are bundled with the extension and looked up by FAE's
+  rendered agent slug; filtering does not make a network request.
 - No `tabs`, `storage`, `cookies`, `webRequest`, or broad host permissions.
 - Page-derived text is rendered with DOM `textContent`, not HTML injection.
 - The parser follows each disc's `data-tooltip-content-id` and validates every
@@ -98,5 +114,8 @@ dist/                          Generated unpacked extension
 
 - The integration depends on FAE's current semantic DOM structure. Parsing is
   isolated in one adapter and covered by a regression fixture.
+- FAE currently exposes agent slugs but not type, element, or rarity on profile
+  cards, so newly added agents remain **Unknown** until the local catalog is
+  updated. Explicit FAE metadata will take precedence if those fields are added.
 - Chromium is the validated packaging target. The implementation uses ordinary
   content-script and DOM APIs, but Firefox packaging has not yet been tested.

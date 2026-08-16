@@ -132,6 +132,12 @@
 
   function createPanel(documentNode, onRefresh) {
     const { SORT_MODES, SORT_MODE_LABELS, prioritizeAgents } = namespace.domain;
+    const {
+      FILTER_FIELDS,
+      FILTER_LABELS,
+      getFilterOptions,
+      filterAgents,
+    } = namespace.agentMetadata;
     documentNode.getElementById(PANEL_ID)?.remove();
 
     const panel = createElement(documentNode, "section", "fae-priority-panel");
@@ -146,12 +152,33 @@
       pendingTooltipCount: 0,
     };
     let sortMode = SORT_MODES.COMBINED;
+    const filters = {
+      [FILTER_FIELDS.TYPE]: null,
+      [FILTER_FIELDS.ELEMENT]: null,
+      [FILTER_FIELDS.RANK]: null,
+    };
     let collapsed = false;
     let showAudit = false;
+    let sortMenuOpen = false;
+    let filterMenuOpen = false;
 
     function render() {
       panel.replaceChildren();
       panel.classList.toggle("is-collapsed", collapsed);
+
+      const filterOptions = Object.fromEntries(
+        Object.values(FILTER_FIELDS).map((field) => [
+          field,
+          getFilterOptions(profile.agents, field),
+        ]),
+      );
+      for (const field of Object.values(FILTER_FIELDS)) {
+        if (filters[field] && !filterOptions[field].includes(filters[field])) {
+          filters[field] = null;
+        }
+      }
+      const filteredAgents = filterAgents(profile.agents, filters);
+      const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
       const header = createElement(documentNode, "header", "panel-header");
       const headingGroup = createElement(documentNode, "div", "heading-group");
@@ -219,6 +246,9 @@
           profile.pendingTooltipCount === 1 ? "" : "s"
         }`;
       }
+      if (activeFilterCount > 0) {
+        summaryText += ` · showing ${filteredAgents.length}`;
+      }
       const summaryRow = createElement(documentNode, "div", "panel-summary-row");
       summaryRow.append(
         createElement(documentNode, "p", "panel-summary", summaryText),
@@ -238,9 +268,40 @@
       summaryRow.append(detailsButton);
       content.append(summaryRow);
 
-      const controls = createElement(documentNode, "div", "sort-controls");
-      controls.setAttribute("role", "group");
-      controls.setAttribute("aria-label", "Priority sort");
+      const controls = createElement(documentNode, "div", "list-controls");
+
+      const sortMenu = createElement(
+        documentNode,
+        "details",
+        "control-menu sort-menu",
+      );
+      sortMenu.open = sortMenuOpen;
+      sortMenu.addEventListener("toggle", () => {
+        sortMenuOpen = sortMenu.open;
+      });
+      const sortSummary = createElement(
+        documentNode,
+        "summary",
+        "control-summary",
+        "Sort by...",
+      );
+      sortSummary.append(
+        createElement(
+          documentNode,
+          "small",
+          "control-current",
+          SORT_MODE_LABELS[sortMode],
+        ),
+      );
+      sortMenu.append(sortSummary);
+
+      const sortOptions = createElement(
+        documentNode,
+        "div",
+        "dropdown-panel sort-options",
+      );
+      sortOptions.setAttribute("role", "group");
+      sortOptions.setAttribute("aria-label", "Priority sort");
       for (const mode of Object.values(SORT_MODES)) {
         const button = createElement(
           documentNode,
@@ -253,15 +314,117 @@
         button.setAttribute("aria-pressed", String(mode === sortMode));
         button.addEventListener("click", () => {
           sortMode = mode;
+          sortMenuOpen = false;
           render();
         });
-        controls.append(button);
+        sortOptions.append(button);
       }
+      sortMenu.append(sortOptions);
+      controls.append(sortMenu);
+
+      const filterMenu = createElement(
+        documentNode,
+        "details",
+        "control-menu filter-menu",
+      );
+      filterMenu.open = filterMenuOpen;
+      filterMenu.addEventListener("toggle", () => {
+        filterMenuOpen = filterMenu.open;
+      });
+      const filterSummary = createElement(
+        documentNode,
+        "summary",
+        "control-summary",
+        "Filter by...",
+      );
+      if (activeFilterCount > 0) {
+        filterSummary.append(
+          createElement(
+            documentNode,
+            "small",
+            "active-filter-count",
+            String(activeFilterCount),
+          ),
+        );
+      }
+      filterMenu.append(filterSummary);
+
+      const filterOptionsPanel = createElement(
+        documentNode,
+        "div",
+        "dropdown-panel filter-options",
+      );
+      for (const field of Object.values(FILTER_FIELDS)) {
+        const label = createElement(documentNode, "label", "filter-field");
+        label.append(
+          createElement(
+            documentNode,
+            "span",
+            "filter-label",
+            FILTER_LABELS[field],
+          ),
+        );
+
+        const select = createElement(
+          documentNode,
+          "select",
+          "filter-select",
+        );
+        const allOption = createElement(documentNode, "option", null, "All");
+        allOption.value = "";
+        select.append(allOption);
+        for (const value of filterOptions[field]) {
+          const option = createElement(documentNode, "option", null, value);
+          option.value = value;
+          select.append(option);
+        }
+        select.value = filters[field] ?? "";
+        select.addEventListener("change", () => {
+          filters[field] = select.value || null;
+          filterMenuOpen = true;
+          render();
+        });
+        label.append(select);
+        filterOptionsPanel.append(label);
+      }
+
+      if (activeFilterCount > 0) {
+        const clearButton = createElement(
+          documentNode,
+          "button",
+          "clear-filters",
+          "Clear filters",
+        );
+        clearButton.type = "button";
+        clearButton.addEventListener("click", () => {
+          for (const field of Object.values(FILTER_FIELDS)) {
+            filters[field] = null;
+          }
+          filterMenuOpen = false;
+          render();
+        });
+        filterOptionsPanel.append(clearButton);
+      }
+      filterMenu.append(filterOptionsPanel);
+      controls.append(filterMenu);
       content.append(controls);
 
       if (profile.agents.length === 0) {
         const emptyMessage = profile.diagnostics[0] ?? "No FAE agents were found.";
         content.append(createElement(documentNode, "p", "empty-state", emptyMessage));
+        panel.append(content);
+        return;
+      }
+
+      if (filteredAgents.length === 0) {
+        content.append(
+          createElement(
+            documentNode,
+            "p",
+            "empty-state",
+            "No agents match the selected filters.",
+          ),
+        );
         panel.append(content);
         return;
       }
@@ -286,7 +449,7 @@
       table.append(head);
 
       const body = createElement(documentNode, "tbody");
-      const prioritized = prioritizeAgents(profile.agents, sortMode);
+      const prioritized = prioritizeAgents(filteredAgents, sortMode);
       prioritized.forEach((agent, index) =>
         appendAgentRow(documentNode, body, agent, index + 1, showAudit),
       );
