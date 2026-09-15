@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "FAE Agent Priorities",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Ranks FAE agent builds by disc set issues and low disc scores.",
   "content_scripts": [
     {

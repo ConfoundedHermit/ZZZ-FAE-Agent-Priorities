@@ -1,6 +1,6 @@
 {
   "name": "fae-agent-priorities",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "A local-only browser extension that ranks FAE agent builds by disc upgrade priority.",
   "type": "module",
