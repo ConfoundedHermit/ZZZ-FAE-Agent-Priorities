@@ -4,7 +4,7 @@
   const namespace = (root.FAEPriorities ??= {});
   const UNKNOWN = "Unknown";
 
-  // FAE leaderboard slugs and released agent classifications, verified 2026-08-16.
+  // FAE agent slugs and classifications, updated 2026-09-14.
   const catalogEntries = {
     alice: ["Anomaly", "Physical", "S"],
     anby: ["Stun", "Electric", "A"],
@@ -17,6 +17,7 @@
     burnice: ["Anomaly", "Fire", "S"],
     caesar: ["Defense", "Physical", "S"],
     cissia: ["Attack", "Electric", "S"],
+    claret: ["Armorer", "Electric", "S"],
     corin: ["Attack", "Physical", "A"],
     dialyn: ["Stun", "Physical", "S"],
     ellen: ["Attack", "Ice", "S"],
@@ -39,6 +40,7 @@
     norma: ["Stun", "Fire", "S"],
     "orphie-magus": ["Attack", "Fire", "S"],
     "pan-yinhu": ["Defense", "Physical", "A"],
+    phoenix: ["Anomaly", "Fire", "S"],
     piper: ["Anomaly", "Physical", "A"],
     promeia: ["Anomaly", "Ice", "S"],
     pulchra: ["Stun", "Physical", "A"],
@@ -46,8 +48,11 @@
     qingyi: ["Stun", "Electric", "S"],
     remielle: ["Anomaly", "Lumiflux", "S"],
     rina: ["Support", "Electric", "S"],
+    roxy: ["Stun", "Wind", "S"],
     seed: ["Attack", "Electric", "S"],
     seth: ["Defense", "Electric", "A"],
+    severian: ["Attack", "Wind", "S"],
+    sigrid: ["Attack", "Ice", "S"],
     "soldier-0-anby": ["Attack", "Electric", "S"],
     "soldier-11": ["Attack", "Fire", "S"],
     soukaku: ["Support", "Ice", "A"],
@@ -94,6 +99,7 @@
       "Support",
       "Defense",
       "Rupture",
+      "Armorer",
       UNKNOWN,
     ],
     [FILTER_FIELDS.ELEMENT]: [
