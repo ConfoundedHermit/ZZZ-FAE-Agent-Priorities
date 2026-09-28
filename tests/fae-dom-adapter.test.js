@@ -79,13 +79,13 @@ function populatedCard(documentNode) {
     },
   })
     .with("h3.title > label", new FakeNode({ textContent: " Fixture Alpha " }))
-    .with("h3.title > .mindscapes", new FakeNode({ textContent: "M1" }))
+    .with(".title .mindscapes", new FakeNode({ textContent: "M1" }))
     .with(
-      "a.button.dedicated[href]",
+      "a.dedicated[href]",
       new FakeNode({ href: "https://zfae.net/profile/fixture-profile/fixture-alpha" }),
     )
     .with(
-      "a.button.build-editor[href]",
+      "a.build-editor[href]",
       new FakeNode({ href: "https://zfae.net/build/fixture-alpha/fixture-build" }),
     );
 
@@ -110,9 +110,9 @@ function populatedCard(documentNode) {
 function emptyCard() {
   return new FakeNode({ dataset: { agentSlug: "fixture-beta" } })
     .with("h3.title > label", new FakeNode({ textContent: "Fixture Beta" }))
-    .with("h3.title > .mindscapes", new FakeNode({ textContent: "M2" }))
+    .with(".title .mindscapes", new FakeNode({ textContent: "M2" }))
     .with(
-      "a.button.dedicated[href]",
+      "a.dedicated[href]",
       new FakeNode({ href: "https://zfae.net/profile/fixture-profile/fixture-beta" }),
     );
 }
@@ -223,9 +223,9 @@ test("missing tooltip content is reported as pending rather than zero", () => {
   assert.ok(result.agents[0].discs.every((disc) => disc.slot !== 4));
 });
 
-test("the sanitized profile fixture retains populated score tooltips", async () => {
+test("the legacy profile fixture retains populated score tooltips", async () => {
   const fixture = await readFile(
-    new URL("fixtures/profile-fragment.html", import.meta.url),
+    new URL("fixtures/profile-legacy.html", import.meta.url),
     "utf8",
   );
 
@@ -234,4 +234,74 @@ test("the sanitized profile fixture retains populated score tooltips", async () 
   assert.equal((fixture.match(/Set score:/g) ?? []).length, 6);
   assert.equal((fixture.match(/Total score:/g) ?? []).length, 6);
   assert.match(fixture, /data-agent-slug="fixture-beta"/);
+});
+
+function inlineCard(documentNode) {
+  const card = populatedCard(documentNode);
+  card.single.delete("h3.title > label");
+  card.with(".title .agent-name", new FakeNode({ textContent: "Fixture Alpha" }));
+  card.dataset.assessmentId = "fixture-build";
+  for (let slot = 1; slot <= 6; slot += 1) {
+    card.with(`.disc-details .stat-list.slot${slot}`, new FakeNode().with(
+      ".tier .tooltip-content",
+      documentNode.byId.get(`tooltip-fixture-build-slot${slot}`),
+    ));
+  }
+  documentNode.byId.clear();
+  return card;
+}
+
+test("current cards read names, links and inline numeric scores", () => {
+  const documentNode = new FakeDocument();
+  documentNode.withAll(".agent-card[data-agent-slug]", [inlineCard(documentNode)]);
+  const result = extractProfile(documentNode);
+  const [agent] = result.agents;
+  assert.equal(agent.name, "Fixture Alpha");
+  assert.equal(agent.mindscape, "M1");
+  assert.equal(agent.key, "fixture-alpha:fixture-build");
+  assert.equal(agent.dedicatedUrl, "https://zfae.net/profile/fixture-profile/fixture-alpha");
+  assert.equal(agent.buildUrl, "https://zfae.net/build/fixture-alpha/fixture-build");
+  assert.equal(agent.status, "complete");
+  assert.equal(result.pendingTooltipCount, 0);
+  assert.deepEqual(agent.discs.map((disc) => disc.totalScore), [81, 82, 83, 84, 85, 86]);
+  assert.deepEqual(agent.discs.map((disc) => disc.setScore), [100, 100, 95, 90, 100, 85]);
+});
+
+test("assessment IDs preserve build identity when the editor link is absent", () => {
+  const documentNode = new FakeDocument();
+  const card = inlineCard(documentNode);
+  card.single.delete("a.build-editor[href]");
+  documentNode.withAll(".agent-card[data-agent-slug]", [card]);
+  assert.equal(extractProfile(documentNode).agents[0].key, "fixture-alpha:fixture-build");
+});
+
+test("empty inline tooltips stay pending per card and recover when populated", () => {
+  const documentNode = new FakeDocument();
+  const cards = [inlineCard(documentNode), inlineCard(documentNode)];
+  const emptyTooltip = new FakeNode();
+  for (const card of cards) {
+    for (let slot = 1; slot <= 6; slot += 1) {
+      card.querySelector(`.disc-details .stat-list.slot${slot}`)
+        .with(".tier .tooltip-content", emptyTooltip);
+    }
+  }
+  documentNode.withAll(".agent-card[data-agent-slug]", cards);
+  const result = extractProfile(documentNode);
+  assert.equal(result.pendingTooltipCount, 12);
+  assert.ok(result.agents.every((agent) => agent.status === "incomplete" && agent.discs.length === 0));
+  emptyTooltip.withAll("li", tooltip(100, 72).querySelectorAll("li"));
+  assert.equal(extractProfile(documentNode).pendingTooltipCount, 0);
+  assert.ok(extractProfile(documentNode).agents.every((agent) => agent.status === "complete"));
+});
+
+test("invalid inline scores cannot produce a complete build", () => {
+  const documentNode = new FakeDocument();
+  const card = inlineCard(documentNode);
+  card.querySelector(".disc-details .stat-list.slot4")
+    .with(".tier .tooltip-content", tooltip(100, 101));
+  documentNode.withAll(".agent-card[data-agent-slug]", [card]);
+  const result = extractProfile(documentNode);
+  assert.equal(result.agents[0].status, "incomplete");
+  assert.equal(result.agents[0].discs.length, 5);
+  assert.equal(result.pendingTooltipCount, 1);
 });

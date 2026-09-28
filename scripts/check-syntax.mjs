@@ -13,6 +13,8 @@ const files = [
   "tests/agent-metadata.test.js",
   "tests/fae-dom-adapter.test.js",
   "tests/panel.test.js",
+  "tests/browser.test.js",
+  "tests/fixtures/browser-regression.js",
 ];
 
 for (const file of files) {

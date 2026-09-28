@@ -81,8 +81,19 @@ npm test
 npm run build
 ```
 
-The sanitized regression fixture at `tests/fixtures/profile-fragment.html` can
-also be opened directly in a browser for a quick UI smoke test.
+The sanitized fixture at `tests/fixtures/profile-fragment.html`
+can also be opened directly in a browser for a quick UI smoke test. It uses
+synthetic names, IDs, and scores with the current inline tooltip structure.
+`profile-saved.html` covers saved pages with empty tooltips, and
+`profile-legacy.html` covers the older tooltip-ID layout.
+
+The test suite also runs these fixtures in headless Chrome, Edge, or Chromium
+when installed in a standard location. Set `FAE_TEST_BROWSER` to a browser
+executable path to use another installation. That test checks actual DOM parsing,
+panel rendering, mutation refresh, and clickable controls under host navigation
+styles at desktop and mobile sizes; it is skipped when no browser is found.
+You can also open `tests/fixtures/browser-regression.html` through a local HTTP
+server to run those checks manually.
 
 ## Project layout
 
@@ -107,13 +118,17 @@ dist/                          Generated unpacked extension
   rendered agent slug; filtering does not make a network request.
 - No `tabs`, `storage`, `cookies`, `webRequest`, or broad host permissions.
 - Page-derived text is rendered with DOM `textContent`, not HTML injection.
-- The parser follows each disc's `data-tooltip-content-id` and validates every
-  percentage before calculating a result.
+- The parser reads each disc's inline tier tooltip, with support for the older
+  `data-tooltip-content-id` layout, and validates every percentage before
+  calculating a result.
 
 ## Known limitations
 
 - The integration depends on FAE's current semantic DOM structure. Parsing is
   isolated in one adapter and covered by a regression fixture.
+- Saved pages may omit hidden score-tooltip contents. Builds without numeric
+  disc scores remain incomplete; use the live profile for ranking or retain
+  hidden content when saving a page.
 - FAE currently exposes agent slugs but not type, element, or rarity on profile
   cards, so newly added agents remain **Unknown** until the local catalog is
   updated. Explicit FAE metadata will take precedence if those fields are added.

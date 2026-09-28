@@ -180,7 +180,8 @@
       const filteredAgents = filterAgents(profile.agents, filters);
       const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
-      const header = createElement(documentNode, "header", "panel-header");
+      // Keep site-wide header navigation rules out of the panel's controls.
+      const header = createElement(documentNode, "div", "panel-header");
       const headingGroup = createElement(documentNode, "div", "heading-group");
       headingGroup.append(
         createElement(documentNode, "h2", "panel-title", "Agent Priorities"),

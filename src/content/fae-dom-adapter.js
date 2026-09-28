@@ -76,15 +76,18 @@
       rank: "Unknown",
       isKnown: false,
     };
-    const name = normalizedText(card.querySelector("h3.title > label")) || slug;
+    const name = normalizedText(
+      card.querySelector(".title .agent-name") ||
+      card.querySelector("h3.title > label"),
+    ) || slug;
     const mindscape = normalizedText(
-      card.querySelector("h3.title > .mindscapes"),
+      card.querySelector(".title .mindscapes"),
     );
     const dedicatedUrl = readHref(
-      card.querySelector("a.button.dedicated[href]"),
+      card.querySelector("a.dedicated[href]"),
     );
-    const buildUrl = readHref(card.querySelector("a.button.build-editor[href]"));
-    const buildId = buildIdFromUrl(buildUrl);
+    const buildUrl = readHref(card.querySelector("a.build-editor[href]"));
+    const buildId = buildIdFromUrl(buildUrl) || card.dataset?.assessmentId || null;
     const discs = [];
     const diagnostics = [];
     const pendingTooltipIds = [];
@@ -104,15 +107,20 @@
         reference?.dataset?.tooltipContentId ||
         reference?.getAttribute?.("data-tooltip-content-id") ||
         null;
-      if (!tooltipId) {
+      // Current cards nest score content inside the disc's tier badge.
+      // Older cards reference a tooltip elsewhere in the document by ID.
+      const tooltip = slotNode.querySelector(".tier .tooltip-content") ||
+        (tooltipId ? documentNode.getElementById(tooltipId) : null);
+      if (!tooltip && !tooltipId) {
         diagnostics.push(`Disc ${slot} has no score-tooltip reference.`);
         continue;
       }
 
-      const tooltip = documentNode.getElementById(tooltipId);
       const scores = parseScoreTooltip(tooltip);
       if (scores.setScore === undefined || scores.totalScore === undefined) {
-        pendingTooltipIds.push(tooltipId);
+        // Inline tooltips have no DOM ID. Include the card index so repeated
+        // builds and agents never collapse into a single pending tooltip.
+        pendingTooltipIds.push(tooltipId || `inline:card-${index + 1}:slot-${slot}`);
         diagnostics.push(`Disc ${slot} score data is not available yet.`);
         continue;
       }
