@@ -14,6 +14,8 @@ const files = [
   "tests/fae-dom-adapter.test.js",
   "tests/panel.test.js",
   "tests/browser.test.js",
+  "tests/browser-process.test.js",
+  "tests/helpers/browser-process.js",
   "tests/fixtures/browser-regression.js",
 ];
 

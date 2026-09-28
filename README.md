@@ -95,6 +95,11 @@ styles at desktop and mobile sizes; it is skipped when no browser is found.
 You can also open `tests/fixtures/browser-regression.html` through a local HTTP
 server to run those checks manually.
 
+The release workflow explicitly uses the runner's stable Google Chrome and logs
+its version. An invalid `FAE_TEST_BROWSER` path fails the test instead of falling
+back to another browser. Browser failures include stderr and distinguish startup
+errors, timeouts, and empty output.
+
 For isolated CI runners where Chromium reports "No usable sandbox", set
 `FAE_TEST_NO_SANDBOX=1` to disable the sandbox for the test browser. The release
 workflow uses this option to run local fixtures on its disposable runner.
