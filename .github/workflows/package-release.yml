@@ -29,6 +29,9 @@ jobs:
           package-manager-cache: false
 
       - name: Validate and build extension
+        env:
+          # The browser opens only local fixtures in this disposable runner.
+          FAE_TEST_NO_SANDBOX: "1"
         run: npm run check
 
       - name: Create user package

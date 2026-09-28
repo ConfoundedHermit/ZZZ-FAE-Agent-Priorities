@@ -95,6 +95,11 @@ styles at desktop and mobile sizes; it is skipped when no browser is found.
 You can also open `tests/fixtures/browser-regression.html` through a local HTTP
 server to run those checks manually.
 
+For isolated CI runners where Chromium reports "No usable sandbox", set
+`FAE_TEST_NO_SANDBOX=1` to disable the sandbox for the test browser. The release
+workflow uses this option to run local fixtures on its disposable runner.
+Leave it unset for normal local runs.
+
 ## Project layout
 
 ```text

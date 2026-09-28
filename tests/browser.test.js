@@ -24,6 +24,8 @@ test("real browser checks parsing, refresh, layout and controls under host CSS",
   try {
     const { stdout } = await promisify(execFile)(browser, [
       "--headless",
+      // Opt in only for isolated test runners that cannot initialize Chromium's sandbox.
+      ...(process.env.FAE_TEST_NO_SANDBOX === "1" ? ["--no-sandbox"] : []),
       "--disable-gpu",
       "--no-first-run",
       "--no-default-browser-check",
